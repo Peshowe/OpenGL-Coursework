@@ -79,7 +79,7 @@ void display(void)
 		{
 			glShadeModel(GL_FLAT);
 			glBegin(GL_QUADS);
-			glColor3f(1.0f, 0.0f, 0.0f);
+			glColor3f(1.0f, 5.0f, 0.0f);
 			glNormal3f(0.3f, 0.4f, 0.87f);
 
 			glVertex3f(1.0f, 1.0f, 1.0f);
@@ -87,26 +87,31 @@ void display(void)
 			glVertex3f(-1.0f, -1.0f, 1.0f);
 			glVertex3f(1.0f, -1.0f, 1.0f);
 
+			glColor3f(1.0f, 0.0f, 0.0f);
 			glVertex3f(1.0f, 1.0f, -1.0f);
 			glVertex3f(-1.0f, 1.0f, -1.0f);
 			glVertex3f(-1.0f, -1.0f, -1.0f);
 			glVertex3f(1.0f, -1.0f, -1.0f);
 			
+			glColor3f(1.0f, 1.0f, 4.0f);
 			glVertex3f(1.0f, 1.0f, 1.0f);
 			glVertex3f(-1.0f, 1.0f, 1.0f);
 			glVertex3f(-1.0f, 1.0f, -1.0f);
 			glVertex3f(1.0f, 1.0f, -1.0f);
 			
+			glColor3f(0.0f, 0.0f, 3.0f);
 			glVertex3f(-1.0f, -1.0f, 1.0f);
 			glVertex3f(1.0f, -1.0f, 1.0f);
 			glVertex3f(1.0f, -1.0f, -1.0f);
 			glVertex3f(-1.0f, -1.0f, -1.0f);
 			
+			glColor3f(0.0f, 1.0f, 0.0f);
 			glVertex3f(1.0f, 1.0f, 1.0f);
 			glVertex3f(1.0f, 1.0f, -1.0f);
 			glVertex3f(1.0f, -1.0f, -1.0f);
 			glVertex3f(1.0f, -1.0f, 1.0f);
 
+			glColor3f(0.0f, 1.0f, 2.0f);
 			glVertex3f(-1.0f, 1.0f, 1.0f);
 			glVertex3f(-1.0f, 1.0f, -1.0f);
 			glVertex3f(-1.0f, -1.0f, -1.0f);
@@ -259,6 +264,7 @@ void arrow_keys(int a_keys, int x, int y)
 // Handling mouse button event.
 void mouseButton(int button, int state, int x, int y)
 {
+
 }
 
 
@@ -267,8 +273,13 @@ void mouseMove(int x, int y)
 {
 	int newX = x - cameraX;
 	int newY = y - cameraY;
-	cameraX = newX;
-	cameraY = newY;
+	if (abs(newX) < 30){
+		cameraX = newX;
+	}
+	if (abs(newY) < 30) {
+		cameraY = newY;
+	}
+	
 	
 	
 }
