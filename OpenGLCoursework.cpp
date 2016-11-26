@@ -53,6 +53,10 @@ void display(void)
 		0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f);
 
+	GLfloat pos[4] = { 0.00, 0.10, 0.20, 1.00 };
+	glLightfv(GL_LIGHT0, GL_POSITION, pos);
+	glEnable(GL_LIGHT0);
+
 	//Cartesian coordinate system as lines.
 	glBegin(GL_LINES);
 	glColor3f(0.0f, 0.0f, 1.0f);
@@ -77,22 +81,25 @@ void display(void)
 
 		case 'f': // to display faces
 		{
+			
 			glShadeModel(GL_FLAT);
 			glBegin(GL_QUADS);
 			glColor3f(1.0f, 5.0f, 0.0f);
+			
 			glNormal3f(0.3f, 0.4f, 0.87f);
-
 			glVertex3f(1.0f, 1.0f, 1.0f);
 			glVertex3f(-1.0f, 1.0f, 1.0f);
 			glVertex3f(-1.0f, -1.0f, 1.0f);
 			glVertex3f(1.0f, -1.0f, 1.0f);
 
+			glNormal3f(0.1f, 0.2f, 0.47f);
 			glColor3f(1.0f, 0.0f, 0.0f);
 			glVertex3f(1.0f, 1.0f, -1.0f);
 			glVertex3f(-1.0f, 1.0f, -1.0f);
 			glVertex3f(-1.0f, -1.0f, -1.0f);
 			glVertex3f(1.0f, -1.0f, -1.0f);
 			
+			glNormal3f(0.6f, 0.1f, 0.1f);
 			glColor3f(1.0f, 1.0f, 4.0f);
 			glVertex3f(1.0f, 1.0f, 1.0f);
 			glVertex3f(-1.0f, 1.0f, 1.0f);
