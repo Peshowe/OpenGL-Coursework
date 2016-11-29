@@ -59,7 +59,7 @@ void display(void)
 		centerX, centerY, centerZ,
 		0.0f, 1.0f, 0.0f);
 
-	GLfloat pos[4] = { 0.00, 0.10, 0.20, 1.00 };
+	GLfloat pos[4] = { 0.00, 1.00, 0.50, 0.00 };
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
 	glEnable(GL_LIGHT0);
 
@@ -92,20 +92,20 @@ void display(void)
 			glBegin(GL_QUADS);
 			glColor3f(1.0f, 5.0f, 0.0f);
 			
-			glNormal3f(0.3f, 0.4f, 0.87f);
+			//glNormal3f(0.3f, 0.4f, 0.87f);
 			glVertex3f(1.0f, 1.0f, 1.0f);
 			glVertex3f(-1.0f, 1.0f, 1.0f);
 			glVertex3f(-1.0f, -1.0f, 1.0f);
 			glVertex3f(1.0f, -1.0f, 1.0f);
 
-			glNormal3f(0.1f, 0.2f, 0.47f);
+			//glNormal3f(0.1f, 0.2f, 0.47f);
 			glColor3f(1.0f, 0.0f, 0.0f);
 			glVertex3f(1.0f, 1.0f, -1.0f);
 			glVertex3f(-1.0f, 1.0f, -1.0f);
 			glVertex3f(-1.0f, -1.0f, -1.0f);
 			glVertex3f(1.0f, -1.0f, -1.0f);
 			
-			glNormal3f(0.6f, 0.1f, 0.1f);
+			//glNormal3f(0.6f, 0.1f, 0.1f);
 			glColor3f(1.0f, 1.0f, 4.0f);
 			glVertex3f(1.0f, 1.0f, 1.0f);
 			glVertex3f(-1.0f, 1.0f, 1.0f);
@@ -289,9 +289,7 @@ void mouseMove(int x, int y)
 {
 		//rotating camera
 		centerX -= (oldX-x);
-		centerZ += (oldX - x);
 		centerY += (oldY-y);
-		
 		
 		oldX = x;
 		oldY = y;
