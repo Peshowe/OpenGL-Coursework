@@ -1,5 +1,5 @@
 ﻿  OpenGLCoursework.cpp
-f:\курсова работа\opengl-coursework\openglcoursework.cpp(56): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+f:\курсова работа\opengl-coursework\openglcoursework.cpp(62): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
   OpenGLCoursework.vcxproj -> F:\Курсова работа\OpenGL-Coursework\Debug\OpenGLCoursework.exe
   OpenGLCoursework.vcxproj -> F:\Курсова работа\OpenGL-Coursework\Debug\OpenGLCoursework.pdb (Full PDB)
   F:\Курсова работа\OpenGL-Coursework\windows-GLUT\bin\glut32.dll

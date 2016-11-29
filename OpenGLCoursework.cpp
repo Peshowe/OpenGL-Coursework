@@ -14,10 +14,16 @@
 // Global variable for current rendering mode.
 char rendermode;
 
+int oldX = 0;
+int oldY = 0;
+ 
 //Camera variables
 int cameraX = 5;
 int cameraY = 5;
 int cameraZ = 10;
+int centerZ = 0;
+int centerX = 0;
+int centerY = 0;
 
 //Cube rotation variables
 float rotqubeX = 0;
@@ -50,7 +56,7 @@ void display(void)
 	glLoadIdentity();
 	// Set the camera.
 	gluLookAt(cameraX, cameraY, cameraZ,
-		0.0f, 0.0f, 0.0f,
+		centerX, centerY, centerZ,
 		0.0f, 1.0f, 0.0f);
 
 	GLfloat pos[4] = { 0.00, 0.10, 0.20, 1.00 };
@@ -233,10 +239,12 @@ void keyboard(unsigned char key, int x, int y)
 		case 'v': rendermode = 'v'; break;  // vertices
 		case 'e': rendermode = 'e'; break;  // edges
 		case 'f': rendermode = 'f'; break;  // faces
-		case 'w': cameraZ--; break; // zoom in
-		case 's': cameraZ++; break; // zoom out
-		case 'a': cameraX--; break;
-		case 'd': cameraX++; break;
+		case 'w': cameraZ--; centerZ--; break; // zoom in
+		case 's': cameraZ++; centerZ++; break; // zoom out
+		case 'a': cameraX--; centerX--; break;
+		case 'd': cameraX++; centerX++; break;
+		case 'n': cameraY++; centerY++; break;
+		case 'm': cameraY--; centerY--; break;
 		case 'x': rotqubeX += 1.0f;  break;  // rotate cube around X axis
 		case 'y': rotqubeY += 1.0f;  break;  // rotate cube around Y axis
 		case 'z': rotqubeZ += 1.0f;  break;  // rotate cube around Z axis
@@ -271,24 +279,22 @@ void arrow_keys(int a_keys, int x, int y)
 // Handling mouse button event.
 void mouseButton(int button, int state, int x, int y)
 {
-
+	oldX = x;
+	oldY = y;
 }
 
 
 // Handling mouse move events.
 void mouseMove(int x, int y)
 {
-	int newX = x - cameraX;
-	int newY = y - cameraY;
-	if (abs(newX) < 30){
-		cameraX = newX;
-	}
-	if (abs(newY) < 30) {
-		cameraY = newY;
-	}
-	
-	
-	
+		//rotating camera
+		centerX -= (oldX-x);
+		centerZ += (oldX - x);
+		centerY += (oldY-y);
+		
+		
+		oldX = x;
+		oldY = y;
 }
 
 

@@ -1,0 +1,20 @@
+/COM,ANSYS RELEASE Release 17.1      BUILD 17.1      UP20160404       14:35:00
+
+ *** ERROR ***                           CP =       0.920   TIME= 14:35:03
+ Data file H:\OpenGL-Coursework\OpenGLCoursework.VC.db has incorrect     
+ format, is missing READ/WRITE permission, or is empty for RESUME.       
+
+ *** WARNING ***                         CP =       0.920   TIME= 14:35:03
+ WHILE PROCESSING FILE BASED INPUT (/INPUT OR MACRO) AN ERROR HAS        
+ OCCURRED.  SHOULD INPUT PROCESSING BE SUSPENDED?                        
+
+ *** ERROR ***                           CP =       0.920   TIME= 14:35:21
+ An unexpected error ( SIG$BREAK ) has occurred...  ANSYS internal data  
+ has been corrupted.  ANSYS is unable to recover and will terminate.     
+ Previously saved files are unaffected.  Please send the data leading    
+ to this operation to your technical support provider, as this will      
+ allow ANSYS, Inc to improve the program.                                
+
+ *** WARNING ***                         CP =       0.920   TIME= 14:35:21
+ WHILE PROCESSING FILE BASED INPUT (/INPUT OR MACRO) AN ERROR HAS        
+ OCCURRED.  SHOULD INPUT PROCESSING BE SUSPENDED?                        
