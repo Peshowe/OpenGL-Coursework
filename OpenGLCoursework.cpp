@@ -10,12 +10,10 @@
 #endif
 
 #include <math.h>       // For mathematic operations.
+#include <cstdio>
 
 // Global variable for current rendering mode.
 char rendermode;
-
-int oldX = 0;
-int oldY = 0;
  
 //Camera variables
 int cameraX = 5;
@@ -24,6 +22,8 @@ int cameraZ = 10;
 int centerZ = 0;
 int centerX = 0;
 int centerY = 0;
+int oldX = 0;
+int oldY = 0;
 
 //Cube rotation variables
 float rotqubeX = 0;
@@ -54,26 +54,32 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glLoadIdentity();
+
 	// Set the camera.
 	gluLookAt(cameraX, cameraY, cameraZ,
 		centerX, centerY, centerZ,
 		0.0f, 1.0f, 0.0f);
 
+	//Turn on the lights
 	GLfloat pos[4] = { 0.00, 1.00, 0.50, 0.00 };
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
+	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 
 	//Cartesian coordinate system as lines.
 	glBegin(GL_LINES);
 	glColor3f(0.0f, 0.0f, 1.0f);
+	glNormal3f(0.0f, 0.0f, 1.0f);
 	glVertex3f(-1.0f, -1.0f, 3.0f);
 	glVertex3f(-1.0f, -1.0f, 4.0f);
 
 	glColor3f(0.0f, 1.0f, 0.0f);
+	glNormal3f(0.0f, 0.0f, 1.0f);
 	glVertex3f(-1.0f, -1.0f, 3.0f);
 	glVertex3f(-1.0f, 0.0f, 3.0f);
 
 	glColor3f(1.0f, 0.0f, 0.0f);
+	glNormal3f(0.0f, 0.0f, 1.0f);
 	glVertex3f(-1.0f, -1.0f, 3.0f);
 	glVertex3f(0.0f, -1.0f, 3.0f);
 	glEnd();
@@ -90,41 +96,57 @@ void display(void)
 			
 			glShadeModel(GL_FLAT);
 			glBegin(GL_QUADS);
-			glColor3f(1.0f, 5.0f, 0.0f);
+
+			//Specifying cube material
+			GLfloat material_Ka[] = { 0.11, 0.06, 0.11, 1.00 };
+			GLfloat material_Kd[] = { 0.43, 0.47, 0.54, 1.00 };
+			GLfloat material_Ks[] = { 0.33, 0.33, 0.52, 1.00 };
+			GLfloat material_Ke[] = { 0.00, 0.00, 0.00, 0.00 };
+			GLfloat material_Se[] = { 10 };
+
+			glMaterialfv(GL_FRONT, GL_AMBIENT, material_Ka);
+			glMaterialfv(GL_FRONT, GL_DIFFUSE, material_Kd);
+			glMaterialfv(GL_FRONT, GL_SPECULAR, material_Ks);
+			glMaterialfv(GL_FRONT, GL_EMISSION, material_Ke);
+			glMaterialfv(GL_FRONT, GL_SHININESS, material_Se);
 			
-			//glNormal3f(0.3f, 0.4f, 0.87f);
+			//front
+			glNormal3f(0.0f, 0.0f, 1.0f);
 			glVertex3f(1.0f, 1.0f, 1.0f);
 			glVertex3f(-1.0f, 1.0f, 1.0f);
 			glVertex3f(-1.0f, -1.0f, 1.0f);
 			glVertex3f(1.0f, -1.0f, 1.0f);
 
-			//glNormal3f(0.1f, 0.2f, 0.47f);
-			glColor3f(1.0f, 0.0f, 0.0f);
+			//back
+			glNormal3f(0.0f, 0.0f, -1.00f);
 			glVertex3f(1.0f, 1.0f, -1.0f);
 			glVertex3f(-1.0f, 1.0f, -1.0f);
 			glVertex3f(-1.0f, -1.0f, -1.0f);
 			glVertex3f(1.0f, -1.0f, -1.0f);
 			
-			//glNormal3f(0.6f, 0.1f, 0.1f);
-			glColor3f(1.0f, 1.0f, 4.0f);
+			//top
+			glNormal3f(0.0f, 1.0f, 0.0f);
 			glVertex3f(1.0f, 1.0f, 1.0f);
 			glVertex3f(-1.0f, 1.0f, 1.0f);
 			glVertex3f(-1.0f, 1.0f, -1.0f);
 			glVertex3f(1.0f, 1.0f, -1.0f);
 			
-			glColor3f(0.0f, 0.0f, 3.0f);
+			//bottom
+			glNormal3f(0.0f, -1.0f, 0.0f);
 			glVertex3f(-1.0f, -1.0f, 1.0f);
 			glVertex3f(1.0f, -1.0f, 1.0f);
 			glVertex3f(1.0f, -1.0f, -1.0f);
 			glVertex3f(-1.0f, -1.0f, -1.0f);
 			
-			glColor3f(0.0f, 1.0f, 0.0f);
+			//right
+			glNormal3f(1.0f, 0.0f, 0.0f);
 			glVertex3f(1.0f, 1.0f, 1.0f);
 			glVertex3f(1.0f, 1.0f, -1.0f);
 			glVertex3f(1.0f, -1.0f, -1.0f);
 			glVertex3f(1.0f, -1.0f, 1.0f);
 
-			glColor3f(0.0f, 1.0f, 2.0f);
+			//left
+			glNormal3f(-1.0f, 0.0f, 0.0f);
 			glVertex3f(-1.0f, 1.0f, 1.0f);
 			glVertex3f(-1.0f, 1.0f, -1.0f);
 			glVertex3f(-1.0f, -1.0f, -1.0f);
@@ -241,13 +263,13 @@ void keyboard(unsigned char key, int x, int y)
 		case 'f': rendermode = 'f'; break;  // faces
 		case 'w': cameraZ--; centerZ--; break; // zoom in
 		case 's': cameraZ++; centerZ++; break; // zoom out
-		case 'a': cameraX--; centerX--; break;
+		case 'a': cameraX--; centerX--; break; 
 		case 'd': cameraX++; centerX++; break;
 		case 'n': cameraY++; centerY++; break;
 		case 'm': cameraY--; centerY--; break;
-		case 'x': rotqubeX += 1.0f;  break;  // rotate cube around X axis
-		case 'y': rotqubeY += 1.0f;  break;  // rotate cube around Y axis
-		case 'z': rotqubeZ += 1.0f;  break;  // rotate cube around Z axis
+		case 'x': rotqubeX += 1.0f; if (rotqubeX == 360.00) rotqubeX = 0.00; break;  // rotate cube around X axis
+		case 'y': rotqubeY += 1.0f; if (rotqubeY == 360.00) rotqubeY = 0.00; break;  // rotate cube around Y axis
+		case 'z': rotqubeZ += 1.0f; if (rotqubeZ == 360.00) rotqubeZ = 0.00; break;  // rotate cube around Z axis
 
 		default:
 			break;
@@ -288,9 +310,11 @@ void mouseButton(int button, int state, int x, int y)
 void mouseMove(int x, int y)
 {
 		//rotating camera
-		centerX -= (oldX-x);
-		centerY += (oldY-y);
-		
+	int newX = centerX - (oldX - x);
+	int newY = centerY + (oldY - y);
+	if(abs(newX) <=50) centerX -= (oldX-x);
+	if(abs(newY) <= 50)	centerY += (oldY-y);
+		printf("x: %d y: %d \n", centerX, centerY);
 		oldX = x;
 		oldY = y;
 }
