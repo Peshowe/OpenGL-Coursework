@@ -11,6 +11,7 @@
 
 #include <math.h>       // For mathematic operations.
 #include <cstdio>
+#include <TextureLoader.h> //For loading an image for the texture mapping
 
 // Global variable for current rendering mode.
 char rendermode;
@@ -24,11 +25,24 @@ int centerX = 0;
 int centerY = 0;
 int oldX = 0;
 int oldY = 0;
+int oldZ;
 
 //Cube rotation variables
 float rotqubeX = 0;
 float rotqubeY = 0;
 float rotqubeZ = 0;
+
+//Specifying cube material variables
+GLfloat material_Ka[] = { 0.11, 0.06, 0.11, 1.00 };
+GLfloat material_Kd[] = { 0.43, 0.47, 0.54, 1.00 };
+GLfloat material_Ks[] = { 0.33, 0.33, 0.52, 1.00 };
+GLfloat material_Ke[] = { 0.00, 0.00, 0.00, 0.00 };
+GLfloat material_Se[] = { 10 };
+
+//Texture mapping variables
+GLuint g_textureID[1];
+unsigned char* image = NULL;
+int iheight, iwidth;
 
 // Scene initialisation.
 void InitGL(GLvoid)
@@ -40,6 +54,25 @@ void InitGL(GLvoid)
 	glDepthFunc(GL_LEQUAL);                // The type of depth testing to do.
 	glEnable(GL_COLOR_MATERIAL);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
+	// Read an image.
+	image = glmReadPPM("mandrill.ppm", &iwidth, &iheight);
+	// Create a texture object with an unused texture ID.
+	glGenTextures(1, &g_textureID[0]);
+	// Set g_textureID as the current 2D texture object.
+	glBindTexture(GL_TEXTURE_2D, g_textureID[0]);
+	// Set the loaded image as the current texture image.
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16, iwidth, iheight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+
+	// Specify what to do when s, t are outside range [0, 1].
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// Specify how to interpolate texture colour values
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	
 }
 
 
@@ -55,10 +88,16 @@ void display(void)
 
 	glLoadIdentity();
 
+	
+
 	// Set the camera.
 	gluLookAt(cameraX, cameraY, cameraZ,
-		centerX, centerY, centerZ,
+		centerX, centerY, 0,
 		0.0f, 1.0f, 0.0f);
+
+	//Enable texturing
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, g_textureID[0]);
 
 	//Turn on the lights
 	GLfloat pos[4] = { 0.00, 1.00, 0.50, 0.00 };
@@ -97,13 +136,6 @@ void display(void)
 			glShadeModel(GL_FLAT);
 			glBegin(GL_QUADS);
 
-			//Specifying cube material
-			GLfloat material_Ka[] = { 0.11, 0.06, 0.11, 1.00 };
-			GLfloat material_Kd[] = { 0.43, 0.47, 0.54, 1.00 };
-			GLfloat material_Ks[] = { 0.33, 0.33, 0.52, 1.00 };
-			GLfloat material_Ke[] = { 0.00, 0.00, 0.00, 0.00 };
-			GLfloat material_Se[] = { 10 };
-
 			glMaterialfv(GL_FRONT, GL_AMBIENT, material_Ka);
 			glMaterialfv(GL_FRONT, GL_DIFFUSE, material_Kd);
 			glMaterialfv(GL_FRONT, GL_SPECULAR, material_Ks);
@@ -112,44 +144,68 @@ void display(void)
 			
 			//front
 			glNormal3f(0.0f, 0.0f, 1.0f);
+			glTexCoord2f(0, 0);
 			glVertex3f(1.0f, 1.0f, 1.0f);
+			glTexCoord2f(0, 1);
 			glVertex3f(-1.0f, 1.0f, 1.0f);
+			glTexCoord2f(1, 1);
 			glVertex3f(-1.0f, -1.0f, 1.0f);
+			glTexCoord2f(1, 0);
 			glVertex3f(1.0f, -1.0f, 1.0f);
 
 			//back
 			glNormal3f(0.0f, 0.0f, -1.00f);
+			glTexCoord2f(0.1, 0.5);
 			glVertex3f(1.0f, 1.0f, -1.0f);
+			glTexCoord2f(0.1, 0.0);
 			glVertex3f(-1.0f, 1.0f, -1.0f);
+			glTexCoord2f(0.4, 0.0);
 			glVertex3f(-1.0f, -1.0f, -1.0f);
+			glTexCoord2f(0.4, 0.6);
 			glVertex3f(1.0f, -1.0f, -1.0f);
 			
 			//top
 			glNormal3f(0.0f, 1.0f, 0.0f);
+			glTexCoord2f(0.3, 0.9);
 			glVertex3f(1.0f, 1.0f, 1.0f);
+			glTexCoord2f(0.3, 0.2);
 			glVertex3f(-1.0f, 1.0f, 1.0f);
+			glTexCoord2f(0.4, 0.2);
 			glVertex3f(-1.0f, 1.0f, -1.0f);
+			glTexCoord2f(0.4, 0.9);
 			glVertex3f(1.0f, 1.0f, -1.0f);
 			
 			//bottom
 			glNormal3f(0.0f, -1.0f, 0.0f);
+			glTexCoord2f(0.6, 0.7);
 			glVertex3f(-1.0f, -1.0f, 1.0f);
+			glTexCoord2f(0.6, 0.5);
 			glVertex3f(1.0f, -1.0f, 1.0f);
+			glTexCoord2f(1.0, 0.5);
 			glVertex3f(1.0f, -1.0f, -1.0f);
+			glTexCoord2f(1.0, 0.7);
 			glVertex3f(-1.0f, -1.0f, -1.0f);
 			
 			//right
 			glNormal3f(1.0f, 0.0f, 0.0f);
+			glTexCoord2f(0.7, 0.3);
 			glVertex3f(1.0f, 1.0f, 1.0f);
+			glTexCoord2f(0.6, 0.1);
 			glVertex3f(1.0f, 1.0f, -1.0f);
+			glTexCoord2f(1.0, 0.1);
 			glVertex3f(1.0f, -1.0f, -1.0f);
+			glTexCoord2f(1.0, 0.3);
 			glVertex3f(1.0f, -1.0f, 1.0f);
 
 			//left
 			glNormal3f(-1.0f, 0.0f, 0.0f);
+			glTexCoord2f(0.5, 1.0);
 			glVertex3f(-1.0f, 1.0f, 1.0f);
+			glTexCoord2f(0.5, 0.5);
 			glVertex3f(-1.0f, 1.0f, -1.0f);
+			glTexCoord2f(1.0, 0.5);
 			glVertex3f(-1.0f, -1.0f, -1.0f);
+			glTexCoord2f(1, 1);
 			glVertex3f(-1.0f, -1.0f, 1.0f);
 
 			glEnd();
@@ -179,6 +235,7 @@ void display(void)
 
 		case 'e': // to display edges
 		{
+			
 			glBegin(GL_LINES);
 			glColor3f(0.0f, 0.0f, 1.0f);
 
@@ -265,11 +322,12 @@ void keyboard(unsigned char key, int x, int y)
 		case 's': cameraZ++; centerZ++; break; // zoom out
 		case 'a': cameraX--; centerX--; break; 
 		case 'd': cameraX++; centerX++; break;
-		case 'n': cameraY++; centerY++; break;
-		case 'm': cameraY--; centerY--; break;
+		case 'm': cameraY++; centerY++; break;
+		case 'n': cameraY--; centerY--; break;
 		case 'x': rotqubeX += 1.0f; if (rotqubeX == 360.00) rotqubeX = 0.00; break;  // rotate cube around X axis
 		case 'y': rotqubeY += 1.0f; if (rotqubeY == 360.00) rotqubeY = 0.00; break;  // rotate cube around Y axis
 		case 'z': rotqubeZ += 1.0f; if (rotqubeZ == 360.00) rotqubeZ = 0.00; break;  // rotate cube around Z axis
+		case 'r': rotqubeX = 0; rotqubeY = 0; rotqubeZ = 0; break; // reset the position of the cube
 
 		default:
 			break;
@@ -301,6 +359,7 @@ void arrow_keys(int a_keys, int x, int y)
 // Handling mouse button event.
 void mouseButton(int button, int state, int x, int y)
 {
+	oldZ = centerZ;
 	oldX = x;
 	oldY = y;
 }
@@ -312,9 +371,15 @@ void mouseMove(int x, int y)
 		//rotating camera
 	int newX = centerX - (oldX - x);
 	int newY = centerY + (oldY - y);
-	if(abs(newX) <=50) centerX -= (oldX-x);
-	if(abs(newY) <= 50)	centerY += (oldY-y);
-		printf("x: %d y: %d \n", centerX, centerY);
+	if (abs(newX) <= 50) {
+		centerX = newX;
+		//centerZ = cos(centerY) * cos(centerX) * cameraZ;
+	}
+	if (abs(newY) <= 50) {
+		centerY = newY;
+		//centerZ = cos(centerY) * cos(centerX) * cameraZ;
+	}
+		printf("x: %d y: %d z: %d \n", centerX, centerY, centerZ);
 		oldX = x;
 		oldY = y;
 }

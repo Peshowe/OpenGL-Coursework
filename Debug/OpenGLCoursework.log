@@ -1,7 +1,15 @@
 ﻿  OpenGLCoursework.cpp
-f:\курсова работа\opengl-coursework\openglcoursework.cpp(101): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-f:\курсова работа\opengl-coursework\openglcoursework.cpp(102): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-f:\курсова работа\opengl-coursework\openglcoursework.cpp(103): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+f:\курсова работа\opengl-coursework\windows-glut\include\textureloader.h(40): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
+f:\курсова работа\opengl-coursework\windows-glut\include\textureloader.h(61): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(2254): note: see declaration of 'sscanf'
+f:\курсова работа\opengl-coursework\windows-glut\include\textureloader.h(63): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(2254): note: see declaration of 'sscanf'
+f:\курсова работа\opengl-coursework\windows-glut\include\textureloader.h(65): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(2254): note: see declaration of 'sscanf'
+f:\курсова работа\opengl-coursework\openglcoursework.cpp(36): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+f:\курсова работа\opengl-coursework\openglcoursework.cpp(37): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+f:\курсова работа\opengl-coursework\openglcoursework.cpp(38): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
   OpenGLCoursework.vcxproj -> F:\Курсова работа\OpenGL-Coursework\Debug\OpenGLCoursework.exe
   OpenGLCoursework.vcxproj -> F:\Курсова работа\OpenGL-Coursework\Debug\OpenGLCoursework.pdb (Full PDB)
   F:\Курсова работа\OpenGL-Coursework\windows-GLUT\bin\glut32.dll
