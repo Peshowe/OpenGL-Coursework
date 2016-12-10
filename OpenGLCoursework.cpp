@@ -12,6 +12,9 @@
 #include <math.h>       // For mathematic operations.
 #include <cstdio>
 #include <TextureLoader.h> //For loading an image for the texture mapping
+#include "objloader.hpp"
+#include <array>
+#include <vector>
 
 // Global variable for current rendering mode.
 char rendermode;
@@ -25,7 +28,6 @@ int centerX = 0;
 int centerY = 0;
 int oldX = 0;
 int oldY = 0;
-int oldZ;
 
 //Cube rotation variables
 float rotqubeX = 0;
@@ -44,10 +46,55 @@ GLuint g_textureID[1];
 unsigned char* image = NULL;
 int iheight, iwidth;
 
+//For loading the meshes
+std::vector<std::array<float, 3>> vertices;
+std::vector<std::array<int, 3>> vertexIndices;
+
+/*
+	Scalling the vertices of the imported meshes to fit in the cube
+*/
+void normaliseVectors() {
+	int i;
+	float maxX = vertices[0][0];
+	float maxY = vertices[0][1];
+	float maxZ = vertices[0][2];
+	float minX = vertices[0][0];
+	float minY = vertices[0][1];
+	float minZ = vertices[0][2];
+	
+	for (i = 0; i < vertices.size(); i++) {
+ 		if (maxX < vertices[i][0]) maxX = vertices[i][0];
+		if (maxY < vertices[i][1]) maxY = vertices[i][1];
+		if (maxZ < vertices[i][2]) maxZ = vertices[i][2];
+		if (minX > vertices[i][0]) minX = vertices[i][0];
+		if (minY > vertices[i][1]) minY = vertices[i][1];
+		if (minZ > vertices[i][2]) minZ = vertices[i][2];
+	}
+
+	float min = min(min(minX, minZ), minY);
+	float range = max(max(maxX-minX, maxZ-minZ), maxY-minY);
+	
+	//Normalise to [0,1]
+	for (i = 0; i < vertices.size(); i++) {
+		vertices[i][0] = (vertices[i][0] - minX) / (range);
+		vertices[i][1] = (vertices[i][1] - minY) / (range);
+		vertices[i][2] = (vertices[i][2] - minZ) / (range);
+	}
+
+	//Scale to [-1,1]
+	for (i = 0; i < vertices.size(); i++) {
+		vertices[i][0] = (vertices[i][0] * 2) - 1;
+		vertices[i][1] = (vertices[i][1] * 2) - 1;
+		vertices[i][2] = (vertices[i][2] * 2) - 1;
+	}
+
+}
+
+
 // Scene initialisation.
 void InitGL(GLvoid)
 {
-	glShadeModel(GL_SMOOTH);               // Enable smooth shading.
+	glShadeModel(GL_FLAT);                 // Enable flat shading.
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // Black background.
 	glClearDepth(1.0f);                    // Depth buffer setup.
 	glEnable(GL_DEPTH_TEST);               // Enables depth testing.
@@ -72,6 +119,9 @@ void InitGL(GLvoid)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	load_obj("screwdriver.obj", vertices, vertexIndices);
+	normaliseVectors();
 	
 }
 
@@ -88,11 +138,11 @@ void display(void)
 
 	glLoadIdentity();
 
-	
-
 	// Set the camera.
+	
+	//gluPerspective(45.0f, aspect, 0.1f, 100.0f);
 	gluLookAt(cameraX, cameraY, cameraZ,
-		centerX, centerY, 0,
+		centerX, centerY, centerZ,
 		0.0f, 1.0f, 0.0f);
 
 	//Enable texturing
@@ -100,14 +150,17 @@ void display(void)
 	glBindTexture(GL_TEXTURE_2D, g_textureID[0]);
 
 	//Turn on the lights
-	GLfloat pos[4] = { 0.00, 1.00, 0.50, 0.00 };
+	GLfloat pos[4] = { 0.00, 1.00, 3.00, 0.00 };
+	GLfloat pos2[4] = { 1.50, 1.00, 1.00, 0.00 };
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
+	
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
+	
 
 	//Cartesian coordinate system as lines.
 	glBegin(GL_LINES);
-	glColor3f(0.0f, 0.0f, 1.0f);
+	glColor3f(0.4f, 0.5f, 1.0f);
 	glNormal3f(0.0f, 0.0f, 1.0f);
 	glVertex3f(-1.0f, -1.0f, 3.0f);
 	glVertex3f(-1.0f, -1.0f, 4.0f);
@@ -128,95 +181,138 @@ void display(void)
 	glRotatef(rotqubeZ, 0.0f, 0.0f, 1.0f);  // Rotate The cube around the Z axis
 
 	// Different render modes.
-	switch(rendermode) {
+	switch (rendermode) {
 
-		case 'f': // to display faces
-		{
-			
-			glShadeModel(GL_FLAT);
-			glBegin(GL_QUADS);
+	case 'f': // to display faces
+	{
+		glBegin(GL_QUADS);
 
-			glMaterialfv(GL_FRONT, GL_AMBIENT, material_Ka);
-			glMaterialfv(GL_FRONT, GL_DIFFUSE, material_Kd);
-			glMaterialfv(GL_FRONT, GL_SPECULAR, material_Ks);
-			glMaterialfv(GL_FRONT, GL_EMISSION, material_Ke);
-			glMaterialfv(GL_FRONT, GL_SHININESS, material_Se);
-			
-			//front
-			glNormal3f(0.0f, 0.0f, 1.0f);
-			glTexCoord2f(0, 0);
-			glVertex3f(1.0f, 1.0f, 1.0f);
-			glTexCoord2f(0, 1);
-			glVertex3f(-1.0f, 1.0f, 1.0f);
-			glTexCoord2f(1, 1);
-			glVertex3f(-1.0f, -1.0f, 1.0f);
-			glTexCoord2f(1, 0);
-			glVertex3f(1.0f, -1.0f, 1.0f);
+		//Set materials
+		glMaterialfv(GL_FRONT, GL_AMBIENT, material_Ka);
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, material_Kd);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, material_Ks);
+		glMaterialfv(GL_FRONT, GL_EMISSION, material_Ke);
+		glMaterialfv(GL_FRONT, GL_SHININESS, material_Se);
 
-			//back
-			glNormal3f(0.0f, 0.0f, -1.00f);
-			glTexCoord2f(0.1, 0.5);
-			glVertex3f(1.0f, 1.0f, -1.0f);
-			glTexCoord2f(0.1, 0.0);
-			glVertex3f(-1.0f, 1.0f, -1.0f);
-			glTexCoord2f(0.4, 0.0);
-			glVertex3f(-1.0f, -1.0f, -1.0f);
-			glTexCoord2f(0.4, 0.6);
-			glVertex3f(1.0f, -1.0f, -1.0f);
-			
-			//top
-			glNormal3f(0.0f, 1.0f, 0.0f);
-			glTexCoord2f(0.3, 0.9);
-			glVertex3f(1.0f, 1.0f, 1.0f);
-			glTexCoord2f(0.3, 0.2);
-			glVertex3f(-1.0f, 1.0f, 1.0f);
-			glTexCoord2f(0.4, 0.2);
-			glVertex3f(-1.0f, 1.0f, -1.0f);
-			glTexCoord2f(0.4, 0.9);
-			glVertex3f(1.0f, 1.0f, -1.0f);
-			
-			//bottom
-			glNormal3f(0.0f, -1.0f, 0.0f);
-			glTexCoord2f(0.6, 0.7);
-			glVertex3f(-1.0f, -1.0f, 1.0f);
-			glTexCoord2f(0.6, 0.5);
-			glVertex3f(1.0f, -1.0f, 1.0f);
-			glTexCoord2f(1.0, 0.5);
-			glVertex3f(1.0f, -1.0f, -1.0f);
-			glTexCoord2f(1.0, 0.7);
-			glVertex3f(-1.0f, -1.0f, -1.0f);
-			
-			//right
-			glNormal3f(1.0f, 0.0f, 0.0f);
-			glTexCoord2f(0.7, 0.3);
-			glVertex3f(1.0f, 1.0f, 1.0f);
-			glTexCoord2f(0.6, 0.1);
-			glVertex3f(1.0f, 1.0f, -1.0f);
-			glTexCoord2f(1.0, 0.1);
-			glVertex3f(1.0f, -1.0f, -1.0f);
-			glTexCoord2f(1.0, 0.3);
-			glVertex3f(1.0f, -1.0f, 1.0f);
+		//front
+		glNormal3f(0.0f, 0.0f, 1.0f);
+		glTexCoord2f(0, 0);
+		glVertex3f(1.0f, 1.0f, 1.0f);
+		glTexCoord2f(0, 1);
+		glVertex3f(-1.0f, 1.0f, 1.0f);
+		glTexCoord2f(1, 1);
+		glVertex3f(-1.0f, -1.0f, 1.0f);
+		glTexCoord2f(1, 0);
+		glVertex3f(1.0f, -1.0f, 1.0f);
 
-			//left
-			glNormal3f(-1.0f, 0.0f, 0.0f);
-			glTexCoord2f(0.5, 1.0);
-			glVertex3f(-1.0f, 1.0f, 1.0f);
-			glTexCoord2f(0.5, 0.5);
-			glVertex3f(-1.0f, 1.0f, -1.0f);
-			glTexCoord2f(1.0, 0.5);
-			glVertex3f(-1.0f, -1.0f, -1.0f);
-			glTexCoord2f(1, 1);
-			glVertex3f(-1.0f, -1.0f, 1.0f);
+		//back
+		glNormal3f(0.0f, 0.0f, -1.00f);
+		glTexCoord2f(0.1, 0.5);
+		glVertex3f(1.0f, 1.0f, -1.0f);
+		glTexCoord2f(0.1, 0.0);
+		glVertex3f(-1.0f, 1.0f, -1.0f);
+		glTexCoord2f(0.4, 0.0);
+		glVertex3f(-1.0f, -1.0f, -1.0f);
+		glTexCoord2f(0.4, 0.6);
+		glVertex3f(1.0f, -1.0f, -1.0f);
 
-			glEnd();
-			break;
+		//top
+		glNormal3f(0.0f, 1.0f, 0.0f);
+		glTexCoord2f(0.3, 0.9);
+		glVertex3f(1.0f, 1.0f, 1.0f);
+		glTexCoord2f(0.3, 0.2);
+		glVertex3f(-1.0f, 1.0f, 1.0f);
+		glTexCoord2f(0.4, 0.2);
+		glVertex3f(-1.0f, 1.0f, -1.0f);
+		glTexCoord2f(0.4, 0.9);
+		glVertex3f(1.0f, 1.0f, -1.0f);
+
+		//bottom
+		glNormal3f(0.0f, -1.0f, 0.0f);
+		glTexCoord2f(0.6, 0.7);
+		glVertex3f(-1.0f, -1.0f, 1.0f);
+		glTexCoord2f(0.6, 0.5);
+		glVertex3f(1.0f, -1.0f, 1.0f);
+		glTexCoord2f(1.0, 0.5);
+		glVertex3f(1.0f, -1.0f, -1.0f);
+		glTexCoord2f(1.0, 0.7);
+		glVertex3f(-1.0f, -1.0f, -1.0f);
+
+		//right
+		glNormal3f(1.0f, 0.0f, 0.0f);
+		glTexCoord2f(0.7, 0.3);
+		glVertex3f(1.0f, 1.0f, 1.0f);
+		glTexCoord2f(0.6, 0.1);
+		glVertex3f(1.0f, 1.0f, -1.0f);
+		glTexCoord2f(1.0, 0.1);
+		glVertex3f(1.0f, -1.0f, -1.0f);
+		glTexCoord2f(1.0, 0.3);
+		glVertex3f(1.0f, -1.0f, 1.0f);
+
+		//left
+		glNormal3f(-1.0f, 0.0f, 0.0f);
+		glTexCoord2f(0.5, 1.0);
+		glVertex3f(-1.0f, 1.0f, 1.0f);
+		glTexCoord2f(0.5, 0.5);
+		glVertex3f(-1.0f, 1.0f, -1.0f);
+		glTexCoord2f(1.0, 0.5);
+		glVertex3f(-1.0f, -1.0f, -1.0f);
+		glTexCoord2f(1, 1);
+		glVertex3f(-1.0f, -1.0f, 1.0f);
+
+
+		glEnd();
+		break;
+	}
+	case 'b':
+	{
+		glBegin(GL_TRIANGLES);
+
+		//Specify materials
+		glMaterialfv(GL_FRONT, GL_AMBIENT, material_Ka);
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, material_Kd);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, material_Ks);
+		glMaterialfv(GL_FRONT, GL_EMISSION, material_Ke);
+		glMaterialfv(GL_FRONT, GL_SHININESS, material_Se);
+
+		int i;
+		int size = vertexIndices.size();
+		for (i = 0; i < size; i++) {
+
+			//Get the vertex indices for each point of each triangle
+			int one = vertexIndices[i][0] - 1;
+			int two = vertexIndices[i][1] - 1;
+			int three = vertexIndices[i][2] - 1;
+
+			//Calculate the surface normal for each triangle by finding the cross product
+			float v[] = { vertices[two][0] - vertices[one][0], vertices[two][1] - vertices[one][1], vertices[two][2] - vertices[one][2] };
+			float w[] = { vertices[three][0] - vertices[one][0], vertices[three][1] - vertices[one][1], vertices[three][2] - vertices[one][2] };
+			
+			float nx = (v[1] * w[2]) - (v[2] * w[1]);
+			float ny = (v[2] * w[0]) - (v[0] * w[2]);
+			float nz = (v[0] * w[1]) - (v[1] * w[0]);
+
+			float ax = nx / (abs(nx) + abs(ny) + abs(nz));
+			float ay = ny / (abs(nx) + abs(ny) + abs(nz));
+			float az = nz / (abs(nx) + abs(ny) + abs(nz));
+
+			glNormal3f(ax, ay, az);
+			//Draw each triangle
+			glVertex3f(vertices[one][0], vertices[one][1], vertices[one][2]);
+			glVertex3f(vertices[two][0], vertices[two][1], vertices[two][2]);
+			glVertex3f(vertices[three][0], vertices[three][1], vertices[three][2]);
 		}
 
+
+		glEnd();
+		break;
+	}
 		case 'v': // to display points
 		{
 			
 			glBegin(GL_POINTS);
 			glColor3f(0.0f, 1.0f, 0.0f);
+		
 			glVertex3f(1.0f, 1.0f, 1.0f);
 			glVertex3f(-1.0f, 1.0f, 1.0f);
 			glVertex3f(-1.0f, -1.0f, 1.0f);
@@ -226,6 +322,16 @@ void display(void)
 			glVertex3f(-1.0f, 1.0f, -1.0f);
 			glVertex3f(-1.0f, -1.0f, -1.0f);
 			glVertex3f(1.0f, -1.0f, -1.0f);
+			glEnd();
+
+			
+			glBegin(GL_POINTS);
+
+			//Display the points of the loaded mesh
+			int i;
+			for (i = 0; i < vertices.size(); i++) {
+				glVertex3f(vertices[i][0], vertices[i][1], vertices[i][2]);
+			}
 
 			glEnd();
 
@@ -237,7 +343,7 @@ void display(void)
 		{
 			
 			glBegin(GL_LINES);
-			glColor3f(0.0f, 0.0f, 1.0f);
+			glColor3f(0.4f, 0.5f, 1.0f);
 
 			glVertex3f(-1.0f, 1.0f, 1.0f);
 			glVertex3f(-1.0f, -1.0f, 1.0f);
@@ -275,6 +381,24 @@ void display(void)
 			glVertex3f(1.0f, 1.0f, -1.0f);
 			glVertex3f(1.0f, -1.0f, -1.0f);
 
+			//Display the edges of the loaded mesh
+			int i;
+			int size = vertexIndices.size();
+			for (i = 0; i < size; i++) {
+
+				int one = vertexIndices[i][0] - 1;
+				int two = vertexIndices[i][1] - 1;
+				int three = vertexIndices[i][2] - 1;
+
+				glVertex3f(vertices[one][0], vertices[one][1], vertices[one][2]);
+				glVertex3f(vertices[two][0], vertices[two][1], vertices[two][2]);
+				
+				glVertex3f(vertices[two][0], vertices[two][1], vertices[two][2]);
+				glVertex3f(vertices[three][0], vertices[three][1], vertices[three][2]);
+
+				glVertex3f(vertices[one][0], vertices[one][1], vertices[one][2]);
+				glVertex3f(vertices[three][0], vertices[three][1], vertices[three][2]);
+			}
 			glEnd();
 			break;
 		}
@@ -297,6 +421,7 @@ void reshape(int width, int height)
 
 	// Need to calculate the aspect ratio of the window for gluPerspective.
 	gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
+	
 
 	// Return to ModelView mode for future operations.
 	glMatrixMode(GL_MODELVIEW);
@@ -318,12 +443,13 @@ void keyboard(unsigned char key, int x, int y)
 		case 'v': rendermode = 'v'; break;  // vertices
 		case 'e': rendermode = 'e'; break;  // edges
 		case 'f': rendermode = 'f'; break;  // faces
-		case 'w': cameraZ--; centerZ--; break; // zoom in
-		case 's': cameraZ++; centerZ++; break; // zoom out
-		case 'a': cameraX--; centerX--; break; 
-		case 'd': cameraX++; centerX++; break;
-		case 'm': cameraY++; centerY++; break;
-		case 'n': cameraY--; centerY--; break;
+		case 'b': rendermode = 'b'; break;  // meshes faces
+		case 'w': cameraZ--; break; //camera translation + rotation
+		case 's': cameraZ++; break; //camera translation + rotation
+		case 'a': cameraX--; centerX--; break; //camera translation (modifies the variables such that it doesn't rotate the view)
+		case 'd': cameraX++; centerX++; break; //camera translation (modifies the variables such that it doesn't rotate the view)
+		case 'm': cameraY++; centerY++; break; //camera translation (modifies the variables such that it doesn't rotate the view)
+		case 'n': cameraY--; centerY--; break; //camera translation (modifies the variables such that it doesn't rotate the view)
 		case 'x': rotqubeX += 1.0f; if (rotqubeX == 360.00) rotqubeX = 0.00; break;  // rotate cube around X axis
 		case 'y': rotqubeY += 1.0f; if (rotqubeY == 360.00) rotqubeY = 0.00; break;  // rotate cube around Y axis
 		case 'z': rotqubeZ += 1.0f; if (rotqubeZ == 360.00) rotqubeZ = 0.00; break;  // rotate cube around Z axis
@@ -359,7 +485,6 @@ void arrow_keys(int a_keys, int x, int y)
 // Handling mouse button event.
 void mouseButton(int button, int state, int x, int y)
 {
-	oldZ = centerZ;
 	oldX = x;
 	oldY = y;
 }
@@ -368,25 +493,19 @@ void mouseButton(int button, int state, int x, int y)
 // Handling mouse move events.
 void mouseMove(int x, int y)
 {
-		//rotating camera
+	//rotating camera
 	int newX = centerX - (oldX - x);
 	int newY = centerY + (oldY - y);
-	if (abs(newX) <= 50) {
+	if (abs(newX) <= 40) {
 		centerX = newX;
-		//centerZ = cos(centerY) * cos(centerX) * cameraZ;
 	}
-	if (abs(newY) <= 50) {
+	if (abs(newY) <= 40) {
 		centerY = newY;
-		//centerZ = cos(centerY) * cos(centerX) * cameraZ;
 	}
-		printf("x: %d y: %d z: %d \n", centerX, centerY, centerZ);
+		printf("x: %d y: %d \n", centerX, centerY);
 		oldX = x;
 		oldY = y;
 }
-
-
-// Note: You may wish to add interactivity like clicking and dragging to move the camera.
-//       In that case, please use the above functions.
 
 
 // Entry point to the application.

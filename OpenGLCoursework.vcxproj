@@ -157,6 +157,7 @@
     <ClCompile Include="OpenGLCoursework.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="objloader.hpp" />
     <ClInclude Include="windows-GLUT\include\TextureLoader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
