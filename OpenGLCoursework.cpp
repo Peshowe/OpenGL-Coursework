@@ -34,6 +34,8 @@ float rotqubeX = 0;
 float rotqubeY = 0;
 float rotqubeZ = 0;
 
+//Specifying the position for the light source
+GLfloat pos[4] = { 0.00, 1.00, 3.00, 0.00 };
 //Specifying cube material variables
 GLfloat material_Ka[] = { 0.11, 0.06, 0.11, 1.00 };
 GLfloat material_Kd[] = { 0.43, 0.47, 0.54, 1.00 };
@@ -71,7 +73,6 @@ void normaliseVectors() {
 		if (minZ > vertices[i][2]) minZ = vertices[i][2];
 	}
 
-	float min = min(min(minX, minZ), minY);
 	float range = max(max(maxX-minX, maxZ-minZ), maxY-minY);
 	
 	//Normalise to [0,1]
@@ -120,7 +121,7 @@ void InitGL(GLvoid)
 
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-	load_obj("screwdriver.obj", vertices, vertexIndices);
+	load_obj("bunny.obj", vertices, vertexIndices);
 	normaliseVectors();
 	
 }
@@ -145,22 +146,14 @@ void display(void)
 		centerX, centerY, centerZ,
 		0.0f, 1.0f, 0.0f);
 
-	//Enable texturing
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, g_textureID[0]);
-
 	//Turn on the lights
-	GLfloat pos[4] = { 0.00, 1.00, 3.00, 0.00 };
-	GLfloat pos2[4] = { 1.50, 1.00, 1.00, 0.00 };
 	glLightfv(GL_LIGHT0, GL_POSITION, pos);
-	
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
-	
 
 	//Cartesian coordinate system as lines.
 	glBegin(GL_LINES);
-	glColor3f(0.4f, 0.5f, 1.0f);
+	glColor3f(0.0f, 0.0f, 1.0f);
 	glNormal3f(0.0f, 0.0f, 1.0f);
 	glVertex3f(-1.0f, -1.0f, 3.0f);
 	glVertex3f(-1.0f, -1.0f, 4.0f);
@@ -176,15 +169,20 @@ void display(void)
 	glVertex3f(0.0f, -1.0f, 3.0f);
 	glEnd();
 
-	glRotatef(rotqubeX, 1.0f, 0.0f, 0.0f);	// Rotate The cube around the X axis
-	glRotatef(rotqubeY, 0.0f, 1.0f, 0.0f);	// Rotate The cube around the Y axis
-	glRotatef(rotqubeZ, 0.0f, 0.0f, 1.0f);  // Rotate The cube around the Z axis
+	//Rotation of the cube (and meshes)
+	glRotatef(rotqubeX, 1.0f, 0.0f, 0.0f);	// Rotate the cube around the X axis
+	glRotatef(rotqubeY, 0.0f, 1.0f, 0.0f);	// Rotate the cube around the Y axis
+	glRotatef(rotqubeZ, 0.0f, 0.0f, 1.0f);  // Rotate the cube around the Z axis
 
 	// Different render modes.
 	switch (rendermode) {
 
 	case 'f': // to display faces
 	{
+		//Enable texturing
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, g_textureID[0]);
+
 		glBegin(GL_QUADS);
 
 		//Set materials
@@ -193,6 +191,9 @@ void display(void)
 		glMaterialfv(GL_FRONT, GL_SPECULAR, material_Ks);
 		glMaterialfv(GL_FRONT, GL_EMISSION, material_Ke);
 		glMaterialfv(GL_FRONT, GL_SHININESS, material_Se);
+
+		
+
 
 		//front
 		glNormal3f(0.0f, 0.0f, 1.0f);
@@ -260,8 +261,12 @@ void display(void)
 		glTexCoord2f(1, 1);
 		glVertex3f(-1.0f, -1.0f, 1.0f);
 
-
+		
 		glEnd();
+
+		//Disable texturing
+		glDisable(GL_TEXTURE_2D);
+
 		break;
 	}
 	case 'b':
@@ -276,15 +281,14 @@ void display(void)
 		glMaterialfv(GL_FRONT, GL_SHININESS, material_Se);
 
 		int i;
-		int size = vertexIndices.size();
-		for (i = 0; i < size; i++) {
+		for (i = 0; i < vertexIndices.size(); i++) {
 
 			//Get the vertex indices for each point of each triangle
 			int one = vertexIndices[i][0] - 1;
 			int two = vertexIndices[i][1] - 1;
 			int three = vertexIndices[i][2] - 1;
 
-			//Calculate the surface normal for each triangle by finding the cross product
+			//Calculate the surface normal for each triangle by finding the cross product (for shading)
 			float v[] = { vertices[two][0] - vertices[one][0], vertices[two][1] - vertices[one][1], vertices[two][2] - vertices[one][2] };
 			float w[] = { vertices[three][0] - vertices[one][0], vertices[three][1] - vertices[one][1], vertices[three][2] - vertices[one][2] };
 			
@@ -322,10 +326,6 @@ void display(void)
 			glVertex3f(-1.0f, 1.0f, -1.0f);
 			glVertex3f(-1.0f, -1.0f, -1.0f);
 			glVertex3f(1.0f, -1.0f, -1.0f);
-			glEnd();
-
-			
-			glBegin(GL_POINTS);
 
 			//Display the points of the loaded mesh
 			int i;
@@ -343,7 +343,7 @@ void display(void)
 		{
 			
 			glBegin(GL_LINES);
-			glColor3f(0.4f, 0.5f, 1.0f);
+			glColor3f(0.0f, 0.0f, 1.0f);
 
 			glVertex3f(-1.0f, 1.0f, 1.0f);
 			glVertex3f(-1.0f, -1.0f, 1.0f);
@@ -383,8 +383,7 @@ void display(void)
 
 			//Display the edges of the loaded mesh
 			int i;
-			int size = vertexIndices.size();
-			for (i = 0; i < size; i++) {
+			for (i = 0; i < vertexIndices.size(); i++) {
 
 				int one = vertexIndices[i][0] - 1;
 				int two = vertexIndices[i][1] - 1;
@@ -399,6 +398,7 @@ void display(void)
 				glVertex3f(vertices[one][0], vertices[one][1], vertices[one][2]);
 				glVertex3f(vertices[three][0], vertices[three][1], vertices[three][2]);
 			}
+
 			glEnd();
 			break;
 		}

@@ -15,13 +15,15 @@ f:\курсова работа\opengl-coursework\objloader.hpp(37): warning C499
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1193): note: see declaration of 'fscanf'
 f:\курсова работа\opengl-coursework\objloader.hpp(43): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1193): note: see declaration of 'fscanf'
-f:\курсова работа\opengl-coursework\openglcoursework.cpp(38): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-f:\курсова работа\opengl-coursework\openglcoursework.cpp(39): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
 f:\курсова работа\opengl-coursework\openglcoursework.cpp(40): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
-f:\курсова работа\opengl-coursework\openglcoursework.cpp(65): warning C4018: '<': signed/unsigned mismatch
-f:\курсова работа\opengl-coursework\openglcoursework.cpp(78): warning C4018: '<': signed/unsigned mismatch
-f:\курсова работа\opengl-coursework\openglcoursework.cpp(85): warning C4018: '<': signed/unsigned mismatch
+f:\курсова работа\opengl-coursework\openglcoursework.cpp(41): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+f:\курсова работа\opengl-coursework\openglcoursework.cpp(42): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+f:\курсова работа\opengl-coursework\openglcoursework.cpp(67): warning C4018: '<': signed/unsigned mismatch
+f:\курсова работа\opengl-coursework\openglcoursework.cpp(79): warning C4018: '<': signed/unsigned mismatch
+f:\курсова работа\opengl-coursework\openglcoursework.cpp(86): warning C4018: '<': signed/unsigned mismatch
+f:\курсова работа\opengl-coursework\openglcoursework.cpp(284): warning C4018: '<': signed/unsigned mismatch
 f:\курсова работа\opengl-coursework\openglcoursework.cpp(332): warning C4018: '<': signed/unsigned mismatch
+f:\курсова работа\opengl-coursework\openglcoursework.cpp(386): warning C4018: '<': signed/unsigned mismatch
   OpenGLCoursework.vcxproj -> F:\Курсова работа\OpenGL-Coursework\Debug\OpenGLCoursework.exe
   OpenGLCoursework.vcxproj -> F:\Курсова работа\OpenGL-Coursework\Debug\OpenGLCoursework.pdb (Full PDB)
   F:\Курсова работа\OpenGL-Coursework\windows-GLUT\bin\glut32.dll
