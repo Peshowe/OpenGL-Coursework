@@ -22,8 +22,8 @@ f:\курсова работа\opengl-coursework\openglcoursework.cpp(67): warni
 f:\курсова работа\opengl-coursework\openglcoursework.cpp(79): warning C4018: '<': signed/unsigned mismatch
 f:\курсова работа\opengl-coursework\openglcoursework.cpp(86): warning C4018: '<': signed/unsigned mismatch
 f:\курсова работа\opengl-coursework\openglcoursework.cpp(284): warning C4018: '<': signed/unsigned mismatch
-f:\курсова работа\opengl-coursework\openglcoursework.cpp(332): warning C4018: '<': signed/unsigned mismatch
-f:\курсова работа\opengl-coursework\openglcoursework.cpp(386): warning C4018: '<': signed/unsigned mismatch
+f:\курсова работа\opengl-coursework\openglcoursework.cpp(333): warning C4018: '<': signed/unsigned mismatch
+f:\курсова работа\opengl-coursework\openglcoursework.cpp(387): warning C4018: '<': signed/unsigned mismatch
   OpenGLCoursework.vcxproj -> F:\Курсова работа\OpenGL-Coursework\Debug\OpenGLCoursework.exe
   OpenGLCoursework.vcxproj -> F:\Курсова работа\OpenGL-Coursework\Debug\OpenGLCoursework.pdb (Full PDB)
   F:\Курсова работа\OpenGL-Coursework\windows-GLUT\bin\glut32.dll

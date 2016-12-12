@@ -284,27 +284,28 @@ void display(void)
 		for (i = 0; i < vertexIndices.size(); i++) {
 
 			//Get the vertex indices for each point of each triangle
-			int one = vertexIndices[i][0] - 1;
-			int two = vertexIndices[i][1] - 1;
-			int three = vertexIndices[i][2] - 1;
+			int p1 = vertexIndices[i][0] - 1;
+			int p2 = vertexIndices[i][1] - 1;
+			int p3 = vertexIndices[i][2] - 1;
 
 			//Calculate the surface normal for each triangle by finding the cross product (for shading)
-			float v[] = { vertices[two][0] - vertices[one][0], vertices[two][1] - vertices[one][1], vertices[two][2] - vertices[one][2] };
-			float w[] = { vertices[three][0] - vertices[one][0], vertices[three][1] - vertices[one][1], vertices[three][2] - vertices[one][2] };
+			float v[] = { vertices[p2][0] - vertices[p1][0], vertices[p2][1] - vertices[p1][1], vertices[p2][2] - vertices[p1][2] };
+			float w[] = { vertices[p3][0] - vertices[p1][0], vertices[p3][1] - vertices[p1][1], vertices[p3][2] - vertices[p1][2] };
 			
 			float nx = (v[1] * w[2]) - (v[2] * w[1]);
 			float ny = (v[2] * w[0]) - (v[0] * w[2]);
 			float nz = (v[0] * w[1]) - (v[1] * w[0]);
 
+			//Normalise the normal vector
 			float ax = nx / (abs(nx) + abs(ny) + abs(nz));
 			float ay = ny / (abs(nx) + abs(ny) + abs(nz));
 			float az = nz / (abs(nx) + abs(ny) + abs(nz));
 
 			glNormal3f(ax, ay, az);
 			//Draw each triangle
-			glVertex3f(vertices[one][0], vertices[one][1], vertices[one][2]);
-			glVertex3f(vertices[two][0], vertices[two][1], vertices[two][2]);
-			glVertex3f(vertices[three][0], vertices[three][1], vertices[three][2]);
+			glVertex3f(vertices[p1][0], vertices[p1][1], vertices[p1][2]);
+			glVertex3f(vertices[p2][0], vertices[p2][1], vertices[p2][2]);
+			glVertex3f(vertices[p3][0], vertices[p3][1], vertices[p3][2]);
 		}
 
 
@@ -385,18 +386,18 @@ void display(void)
 			int i;
 			for (i = 0; i < vertexIndices.size(); i++) {
 
-				int one = vertexIndices[i][0] - 1;
-				int two = vertexIndices[i][1] - 1;
-				int three = vertexIndices[i][2] - 1;
+				int p1 = vertexIndices[i][0] - 1;
+				int p2 = vertexIndices[i][1] - 1;
+				int p3 = vertexIndices[i][2] - 1;
 
-				glVertex3f(vertices[one][0], vertices[one][1], vertices[one][2]);
-				glVertex3f(vertices[two][0], vertices[two][1], vertices[two][2]);
+				glVertex3f(vertices[p1][0], vertices[p1][1], vertices[p1][2]);
+				glVertex3f(vertices[p2][0], vertices[p2][1], vertices[p2][2]);
 				
-				glVertex3f(vertices[two][0], vertices[two][1], vertices[two][2]);
-				glVertex3f(vertices[three][0], vertices[three][1], vertices[three][2]);
+				glVertex3f(vertices[p2][0], vertices[p2][1], vertices[p2][2]);
+				glVertex3f(vertices[p3][0], vertices[p3][1], vertices[p3][2]);
 
-				glVertex3f(vertices[one][0], vertices[one][1], vertices[one][2]);
-				glVertex3f(vertices[three][0], vertices[three][1], vertices[three][2]);
+				glVertex3f(vertices[p1][0], vertices[p1][1], vertices[p1][2]);
+				glVertex3f(vertices[p3][0], vertices[p3][1], vertices[p3][2]);
 			}
 
 			glEnd();
